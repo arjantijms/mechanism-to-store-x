@@ -9,6 +9,9 @@ import java.util.Queue;
 
 import javax.enterprise.inject.spi.Annotated;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.naming.InitialContext;
+import javax.naming.NameNotFoundException;
+import javax.naming.NamingException;
 
 public class CdiUtils {
 	
@@ -43,6 +46,47 @@ public class CdiUtils {
         }
 
         return empty();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static <T> T jndiLookup(String name) {
+        InitialContext context = null;
+        try {
+            context = new InitialContext();
+            return (T) context.lookup(name);
+        } catch (NamingException e) {
+            if (is(e, NameNotFoundException.class)) {
+                return null;
+            } else {
+                throw new IllegalStateException(e);
+            }
+        } finally {
+            close(context);
+        }
+    }
+
+    private static void close(InitialContext context) {
+        try {
+            if (context != null) {
+                context.close();
+            }
+        } catch (NamingException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+    
+    public static <T extends Throwable> boolean is(Throwable exception, Class<T> type) {
+        Throwable unwrappedException = exception;
+
+        while (unwrappedException != null) {
+            if (type.isInstance(unwrappedException)) {
+                return true;
+            }
+
+            unwrappedException = unwrappedException.getCause();
+        }
+
+        return false;
     }
 
 }

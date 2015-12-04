@@ -30,7 +30,6 @@ public class CdiExtension implements Extension {
                 .scope(ApplicationScoped.class)
                 .types(IdentityStore.class)
                 .create(e -> new EmbeddedIdentityStore(result.get().value()));
-
         }
     }
 
