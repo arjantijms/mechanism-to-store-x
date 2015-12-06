@@ -11,6 +11,7 @@
 	<modules>
 		<module>jsr375</module>
 		<module>app</module>
+        <module>app-db</module>
 	</modules>
 
 </project>
