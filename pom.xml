@@ -12,6 +12,7 @@
         <module>jsr375</module>
         <module>app-mem</module>
         <module>app-db</module>
+        <moduke>app-custom</moduke>
     </modules>
 
 </project>
