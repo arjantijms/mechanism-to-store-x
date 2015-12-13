@@ -14,9 +14,11 @@ import javax.enterprise.inject.spi.ProcessBean;
 import javax.security.identitystore.IdentityStore;
 import javax.security.identitystore.annotation.DataBaseIdentityStoreDefinition;
 import javax.security.identitystore.annotation.EmbeddedIdentityStoreDefinition;
+import javax.security.identitystore.annotation.LdapIdentityStoreDefinition;
 
 import org.glassfish.jsr375.identitystores.DataBaseIdentityStore;
 import org.glassfish.jsr375.identitystores.EmbeddedIdentityStore;
+import org.glassfish.jsr375.identitystores.LDapIdentityStore;
 
 public class CdiExtension implements Extension {
 
@@ -26,6 +28,11 @@ public class CdiExtension implements Extension {
 
         ProcessBean<T> event = eventIn; // JDK8 u60 workaround
 
+        // TODO: 
+        // * What if multiple definitions present?
+        // *   -> Make created Bean<T>s alternatives
+        // *   -> Throw exception?
+        
         Optional<EmbeddedIdentityStoreDefinition> optionalEmbeddedStore = getAnnotation(beanManager, event.getAnnotated(), EmbeddedIdentityStoreDefinition.class);
         if (optionalEmbeddedStore.isPresent()) {
             identityStoreBean = new CdiProducer<IdentityStore>()
@@ -42,6 +49,13 @@ public class CdiExtension implements Extension {
                 .create(e -> new DataBaseIdentityStore(optionalDBStore.get()));
         }
         
+        Optional<LdapIdentityStoreDefinition> optionalLdapStore = getAnnotation(beanManager, event.getAnnotated(), LdapIdentityStoreDefinition.class);
+        if (optionalLdapStore.isPresent()) {
+            identityStoreBean = new CdiProducer<IdentityStore>()
+                .scope(ApplicationScoped.class)
+                .types(IdentityStore.class)
+                .create(e -> new LDapIdentityStore(optionalLdapStore.get()));
+        }
         
     }
 
