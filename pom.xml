@@ -13,7 +13,7 @@
         <module>app-mem</module>
         <module>app-db</module>
         <module>app-ldap</module>
-        <moduke>app-custom</moduke>
+        <module>app-custom</module>
     </modules>
 
 </project>

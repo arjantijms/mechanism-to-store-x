@@ -31,6 +31,7 @@ public class DatabaseSetup {
         executeUpdate(dataSource, "INSERT INTO caller VALUES('reza', 'secret1')");
         executeUpdate(dataSource, "INSERT INTO caller VALUES('alex', 'secret2')");
         executeUpdate(dataSource, "INSERT INTO caller VALUES('arjan', 'secret2')");
+        executeUpdate(dataSource, "INSERT INTO caller VALUES('werner', 'secret2')");
         
         executeUpdate(dataSource, "INSERT INTO caller_groups VALUES('reza', 'foo')");
         executeUpdate(dataSource, "INSERT INTO caller_groups VALUES('reza', 'bar')");
@@ -39,6 +40,7 @@ public class DatabaseSetup {
         executeUpdate(dataSource, "INSERT INTO caller_groups VALUES('alex', 'bar')");
         
         executeUpdate(dataSource, "INSERT INTO caller_groups VALUES('arjan', 'foo')");
+        executeUpdate(dataSource, "INSERT INTO caller_groups VALUES('werner', 'foo')");
     }
     
     public void destroy() {
