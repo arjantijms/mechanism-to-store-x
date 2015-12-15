@@ -4,23 +4,28 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.annotation.sql.DataSourceDefinition;
-import javax.ejb.Stateless;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import javax.sql.DataSource;
 
 @DataSourceDefinition(
     // global to circumvent https://java.net/jira/browse/GLASSFISH-21447
     name = "java:global/MyDS",
     className = "org.h2.jdbcx.JdbcDataSource",
-    url="jdbc:h2:mem:test"
+    url="jdbc:h2:mem:test;DB_CLOSE_ON_EXIT=FALSE"
 )
-@Stateless
+@Singleton
+@Startup
 public class DatabaseSetup {
     
     @Resource(lookup="java:global/MyDS")
     private DataSource dataSource;
 
+    @PostConstruct
     public void init() {
         executeUpdate(dataSource, "DROP TABLE IF EXISTS caller");
         executeUpdate(dataSource, "DROP TABLE IF EXISTS caller_groups");
@@ -43,9 +48,14 @@ public class DatabaseSetup {
         executeUpdate(dataSource, "INSERT INTO caller_groups VALUES('werner', 'foo')");
     }
     
+    @PreDestroy
     public void destroy() {
-        executeUpdate(dataSource, "DROP TABLE IF EXISTS caller");
-        executeUpdate(dataSource, "DROP TABLE IF EXISTS caller_groups");
+    	try {
+    		executeUpdate(dataSource, "DROP TABLE IF EXISTS caller");
+    		executeUpdate(dataSource, "DROP TABLE IF EXISTS caller_groups");
+    	} catch (Exception e) {
+    		// silently ignore, concerns in-memory database
+    	}
     }
     
     private void executeUpdate(DataSource dataSource, String query) {

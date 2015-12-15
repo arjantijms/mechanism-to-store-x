@@ -68,16 +68,15 @@ public class CdiExtension implements Extension {
         }
         
     }
-    
-    public void processHttpAuthenticationMechanism(@Observes ProcessBean<HttpAuthenticationMechanism> eventIn, BeanManager beanManager) {
-        int a;
-        a = 4;
-    }
 
     public void afterBean(final @Observes AfterBeanDiscovery afterBeanDiscovery) {
         if (identityStoreBean != null) {
             afterBeanDiscovery.addBean(identityStoreBean);
         }
+    }
+    
+    public boolean isHttpAuthenticationMechanismFound() {
+        return httpAuthenticationMechanismFound;
     }
 
 }
