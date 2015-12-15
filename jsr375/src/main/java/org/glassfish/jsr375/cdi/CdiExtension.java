@@ -11,6 +11,7 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessBean;
+import javax.security.authenticationmechanism.http.HttpAuthenticationMechanism;
 import javax.security.identitystore.IdentityStore;
 import javax.security.identitystore.annotation.DataBaseIdentityStoreDefinition;
 import javax.security.identitystore.annotation.EmbeddedIdentityStoreDefinition;
@@ -22,7 +23,11 @@ import org.glassfish.jsr375.identitystores.LDapIdentityStore;
 
 public class CdiExtension implements Extension {
 
+    // Note: for now use the highlander rule: "there can be only one" for
+    // both identity stores and (http) authentication mechanisms.
+    // This could be extended later to support multiple
     private Bean<IdentityStore> identityStoreBean;
+    private boolean httpAuthenticationMechanismFound;
 
     public <T> void processBean(@Observes ProcessBean<T> eventIn, BeanManager beanManager) {
 
@@ -57,6 +62,16 @@ public class CdiExtension implements Extension {
                 .create(e -> new LDapIdentityStore(optionalLdapStore.get()));
         }
         
+        if (event.getAnnotated().getTypeClosure().contains(HttpAuthenticationMechanism.class)) {
+            // enabled bean implementing the HttpAuthenticationMechanism found
+            httpAuthenticationMechanismFound = true;
+        }
+        
+    }
+    
+    public void processHttpAuthenticationMechanism(@Observes ProcessBean<HttpAuthenticationMechanism> eventIn, BeanManager beanManager) {
+        int a;
+        a = 4;
     }
 
     public void afterBean(final @Observes AfterBeanDiscovery afterBeanDiscovery) {
