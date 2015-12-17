@@ -14,8 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Test Servlet that prints out the name of the authenticated caller and whether
  * this caller is in any of the roles {foo, bar, kaz}
- * 
- *
  */
 @EmbeddedIdentityStoreDefinition({ 
     @Credentials(callerName = "reza", password = "secret1", groups = { "foo", "bar" }),
