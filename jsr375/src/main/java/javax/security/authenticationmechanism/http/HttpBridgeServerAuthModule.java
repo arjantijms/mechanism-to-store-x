@@ -23,6 +23,7 @@ import javax.security.auth.message.MessageInfo;
 import javax.security.auth.message.MessagePolicy;
 import javax.security.auth.message.config.ServerAuthContext;
 import javax.security.auth.message.module.ServerAuthModule;
+import javax.security.identitystore.IdentityStore;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -55,7 +56,10 @@ public class HttpBridgeServerAuthModule implements ServerAuthModule {
 
 	@Override
 	public AuthStatus validateRequest(MessageInfo messageInfo, Subject clientSubject, Subject serviceSubject) throws AuthException {
-		HttpMsgContext msgContext = new HttpMsgContext(handler, options, messageInfo, clientSubject);
+		
+	    IdentityStore identityStore = CDI.current().select(IdentityStore.class).get();
+	    
+	    HttpMsgContext msgContext = new HttpMsgContext(handler, options, messageInfo, clientSubject);
 		
 		return CDI.current()
 		          .select(HttpAuthenticationMechanism.class).get()

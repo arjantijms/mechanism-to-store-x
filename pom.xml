@@ -14,6 +14,8 @@
         <module>app-db</module>
         <module>app-ldap</module>
         <module>app-custom</module>
+        
+        <module>app-mem-custom</module>
     </modules>
 
 </project>

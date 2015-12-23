@@ -12,6 +12,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessBean;
 import javax.security.authenticationmechanism.http.HttpAuthenticationMechanism;
+import javax.security.authenticationmechanism.http.annotation.BasicAuthenticationMechanismDefinition;
 import javax.security.identitystore.IdentityStore;
 import javax.security.identitystore.annotation.DataBaseIdentityStoreDefinition;
 import javax.security.identitystore.annotation.EmbeddedIdentityStoreDefinition;
@@ -20,6 +21,7 @@ import javax.security.identitystore.annotation.LdapIdentityStoreDefinition;
 import org.glassfish.jsr375.identitystores.DataBaseIdentityStore;
 import org.glassfish.jsr375.identitystores.EmbeddedIdentityStore;
 import org.glassfish.jsr375.identitystores.LDapIdentityStore;
+import org.glassfish.jsr375.mechanisms.BasicAuthenticationMechanism;
 
 public class CdiExtension implements Extension {
 
@@ -27,6 +29,7 @@ public class CdiExtension implements Extension {
     // both identity stores and (http) authentication mechanisms.
     // This could be extended later to support multiple
     private Bean<IdentityStore> identityStoreBean;
+    private Bean<HttpAuthenticationMechanism> authenticationMechanismBean;
     private boolean httpAuthenticationMechanismFound;
 
     public <T> void processBean(@Observes ProcessBean<T> eventIn, BeanManager beanManager) {
@@ -62,7 +65,15 @@ public class CdiExtension implements Extension {
                 .create(e -> new LDapIdentityStore(optionalLdapStore.get()));
         }
         
-        if (event.getAnnotated().getTypeClosure().contains(HttpAuthenticationMechanism.class)) {
+        Optional<BasicAuthenticationMechanismDefinition> optionalBasicMechanism = getAnnotation(beanManager, event.getAnnotated(), BasicAuthenticationMechanismDefinition.class);
+        if (optionalBasicMechanism.isPresent()) {
+            authenticationMechanismBean = new CdiProducer<HttpAuthenticationMechanism>()
+                .scope(ApplicationScoped.class)
+                .types(HttpAuthenticationMechanism.class)
+                .create(e -> new BasicAuthenticationMechanism(optionalBasicMechanism.get().realmName()));
+        }
+        
+        if (event.getBean().getTypes().contains(HttpAuthenticationMechanism.class)) {
             // enabled bean implementing the HttpAuthenticationMechanism found
             httpAuthenticationMechanismFound = true;
         }
@@ -72,6 +83,9 @@ public class CdiExtension implements Extension {
     public void afterBean(final @Observes AfterBeanDiscovery afterBeanDiscovery) {
         if (identityStoreBean != null) {
             afterBeanDiscovery.addBean(identityStoreBean);
+        }
+        if (authenticationMechanismBean != null) {
+            afterBeanDiscovery.addBean(authenticationMechanismBean);
         }
     }
     
