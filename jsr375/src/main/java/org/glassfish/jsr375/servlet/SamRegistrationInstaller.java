@@ -6,7 +6,6 @@ import static javax.security.authenticationmechanism.http.Jaspic.registerServerA
 import java.util.Set;
 
 import javax.enterprise.inject.spi.CDI;
-import javax.security.authenticationmechanism.http.HttpBridgeServerAuthModule;
 import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -15,6 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebListener;
 
 import org.glassfish.jsr375.cdi.CdiExtension;
+import org.glassfish.jsr375.mechanisms.HttpBridgeServerAuthModule;
 
 /**
  * If an HttpAuthenticationMechanism implementation has been found on the classpath, this 
