@@ -46,6 +46,7 @@ public class CdiExtension implements Extension {
             identityStoreBean = new CdiProducer<IdentityStore>()
                 .scope(ApplicationScoped.class)
                 .types(IdentityStore.class)
+                .addToId(EmbeddedIdentityStoreDefinition.class)
                 .create(e -> new EmbeddedIdentityStore(optionalEmbeddedStore.get().value()));
         }
         
@@ -54,6 +55,7 @@ public class CdiExtension implements Extension {
             identityStoreBean = new CdiProducer<IdentityStore>()
                 .scope(ApplicationScoped.class)
                 .types(IdentityStore.class)
+                .addToId(DataBaseIdentityStoreDefinition.class)
                 .create(e -> new DataBaseIdentityStore(optionalDBStore.get()));
         }
         
@@ -62,6 +64,7 @@ public class CdiExtension implements Extension {
             identityStoreBean = new CdiProducer<IdentityStore>()
                 .scope(ApplicationScoped.class)
                 .types(IdentityStore.class)
+                .addToId(LdapIdentityStoreDefinition.class)
                 .create(e -> new LDapIdentityStore(optionalLdapStore.get()));
         }
         
@@ -70,6 +73,7 @@ public class CdiExtension implements Extension {
             authenticationMechanismBean = new CdiProducer<HttpAuthenticationMechanism>()
                 .scope(ApplicationScoped.class)
                 .types(HttpAuthenticationMechanism.class)
+                .addToId(BasicAuthenticationMechanismDefinition.class)
                 .create(e -> new BasicAuthenticationMechanism(optionalBasicMechanism.get().realmName()));
         }
         
@@ -84,6 +88,7 @@ public class CdiExtension implements Extension {
         if (identityStoreBean != null) {
             afterBeanDiscovery.addBean(identityStoreBean);
         }
+        
         if (authenticationMechanismBean != null) {
             afterBeanDiscovery.addBean(authenticationMechanismBean);
         }

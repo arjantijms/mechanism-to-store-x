@@ -39,7 +39,7 @@ public class BasicAuthenticationMechanism implements HttpAuthenticationMechanism
 		if (!isEmpty(credentials)) {
 		    
 		    IdentityStore identityStore = CDI.current().select(IdentityStore.class).get();
-		    try {
+		    
 		    CredentialValidationResult result = identityStore.validate(
                 new UsernamePasswordCredential(credentials[0], new Password(credentials[1])));
 
@@ -47,9 +47,6 @@ public class BasicAuthenticationMechanism implements HttpAuthenticationMechanism
                 return httpMsgContext.notifyContainerAboutLogin(
                     result.getCallerName(), result.getCallerGroups());
 			}		
-		    } catch (Throwable e) {
-		        e.printStackTrace();
-		    }
 		}
 		
 		if (httpMsgContext.isProtected()) {

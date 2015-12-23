@@ -20,6 +20,7 @@ import javax.enterprise.inject.spi.PassivationCapable;
 // See http://weld.cdi-spec.org/news/2015/02/25/weld-300Alpha5/#_bean_builder_api
 public class CdiProducer<T> implements Bean<T>, PassivationCapable {
     
+    private String id = this.getClass().getName();
     private String name;
     private Class<?> beanClass = Object.class;
     private Set<Type> types = singleton(Object.class);
@@ -29,7 +30,7 @@ public class CdiProducer<T> implements Bean<T>, PassivationCapable {
     
     @Override
     public String getId() {
-        return this.getClass().getName();
+        return id;
     }
     
     @Override
@@ -124,6 +125,11 @@ public class CdiProducer<T> implements Bean<T>, PassivationCapable {
     
     protected CdiProducer<T> scope(Class<? extends Annotation> scope) {
         this.scope = scope;
+        return this;
+    }
+    
+    protected CdiProducer<T> addToId(Object object) {
+        id = id + " " + object.toString();
         return this;
     }
     
