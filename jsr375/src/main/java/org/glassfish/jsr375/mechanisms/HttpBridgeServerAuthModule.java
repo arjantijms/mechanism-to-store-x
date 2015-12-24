@@ -12,7 +12,7 @@ import javax.security.auth.message.MessagePolicy;
 import javax.security.auth.message.config.ServerAuthContext;
 import javax.security.auth.message.module.ServerAuthModule;
 import javax.security.authenticationmechanism.http.HttpAuthenticationMechanism;
-import javax.security.authenticationmechanism.http.HttpMsgContext;
+import javax.security.authenticationmechanism.http.HttpMessageContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -45,7 +45,7 @@ public class HttpBridgeServerAuthModule implements ServerAuthModule {
 
 	@Override
 	public AuthStatus validateRequest(MessageInfo messageInfo, Subject clientSubject, Subject serviceSubject) throws AuthException {
-	    HttpMsgContext msgContext = new HttpMsgContext(handler, options, messageInfo, clientSubject);
+	    HttpMessageContext msgContext = new HttpMessageContextImpl(handler, options, messageInfo, clientSubject);
 		
 		return CDI.current()
 		          .select(HttpAuthenticationMechanism.class).get()
@@ -54,7 +54,7 @@ public class HttpBridgeServerAuthModule implements ServerAuthModule {
 
 	@Override
 	public AuthStatus secureResponse(MessageInfo messageInfo, Subject serviceSubject) throws AuthException {
-	    HttpMsgContext msgContext = new HttpMsgContext(handler, options, messageInfo, null);
+	    HttpMessageContext msgContext = new HttpMessageContextImpl(handler, options, messageInfo, null);
         
         return CDI.current()
                   .select(HttpAuthenticationMechanism.class).get()
@@ -67,7 +67,7 @@ public class HttpBridgeServerAuthModule implements ServerAuthModule {
 	 */
 	@Override
 	public void cleanSubject(MessageInfo messageInfo, Subject subject) throws AuthException {
-	    HttpMsgContext msgContext = new HttpMsgContext(handler, options, messageInfo, subject);
+	    HttpMessageContext msgContext = new HttpMessageContextImpl(handler, options, messageInfo, subject);
 	    
 	    CDI.current()
            .select(HttpAuthenticationMechanism.class).get()

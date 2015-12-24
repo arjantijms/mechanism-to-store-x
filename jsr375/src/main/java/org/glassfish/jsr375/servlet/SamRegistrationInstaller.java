@@ -1,7 +1,7 @@
 package org.glassfish.jsr375.servlet;
 
-import static javax.security.authenticationmechanism.http.Jaspic.deregisterServerAuthModule;
-import static javax.security.authenticationmechanism.http.Jaspic.registerServerAuthModule;
+import static org.glassfish.jsr375.mechanisms.Jaspic.deregisterServerAuthModule;
+import static org.glassfish.jsr375.mechanisms.Jaspic.registerServerAuthModule;
 
 import java.util.Set;
 

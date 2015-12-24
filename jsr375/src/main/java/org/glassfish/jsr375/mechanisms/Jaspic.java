@@ -1,4 +1,4 @@
-package javax.security.authenticationmechanism.http;
+package org.glassfish.jsr375.mechanisms;
 
 import static java.lang.Boolean.TRUE;
 import static org.glassfish.jsr375.Utils.isEmpty;
@@ -6,7 +6,6 @@ import static org.glassfish.jsr375.Utils.isEmpty;
 import java.io.IOException;
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -17,36 +16,33 @@ import javax.security.auth.message.callback.CallerPrincipalCallback;
 import javax.security.auth.message.callback.GroupPrincipalCallback;
 import javax.security.auth.message.config.AuthConfigFactory;
 import javax.security.auth.message.module.ServerAuthModule;
-import javax.security.authenticationmechanism.DefaultAuthConfigProvider;
+import javax.security.authenticationmechanism.http.AuthenticationParameters;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * A set of utility methods for using the JASPIC API, specially in combination with
- * the OmniServerAuthModule.
- * <p>
- * Note that this contains various methods that assume being called from a JSF context.
+ * A set of utility methods for using the JASPIC API
  * 
  * @author Arjan Tijms
  *
  */
 public final class Jaspic {
 	
-	public static final String IS_AUTHENTICATION = "org.omnifaces.security.message.request.authentication";
-	public static final String IS_AUTHENTICATION_FROM_FILTER = "org.omnifaces.security.message.request.authenticationFromFilter";
-	public static final String IS_SECURE_RESPONSE = "org.omnifaces.security.message.request.secureResponse";
-	public static final String IS_REFRESH = "org.omnifaces.security.message.request.isRefresh";
-	public static final String DID_AUTHENTICATION = "org.omnifaces.security.message.request.didAuthentication";
+	public static final String IS_AUTHENTICATION = "org.glassfish.jsr375.security.message.request.authentication";
+	public static final String IS_AUTHENTICATION_FROM_FILTER = "org.glassfish.jsr375.security.message.request.authenticationFromFilter";
+	public static final String IS_SECURE_RESPONSE = "org.glassfish.jsr375.security.message.request.secureResponse";
+	public static final String IS_REFRESH = "org.glassfish.jsr375.security.message.request.isRefresh";
+	public static final String DID_AUTHENTICATION = "org.glassfish.jsr375.security.message.request.didAuthentication";
 	
-	public static final String AUTH_PARAMS = "org.omnifaces.security.message.request.authParams";
+	public static final String AUTH_PARAMS = "org.glassfish.jsr375.security.message.request.authParams";
 	
-	public static final String LOGGEDIN_USERNAME = "org.omnifaces.security.message.loggedin.username";
-	public static final String LOGGEDIN_ROLES = "org.omnifaces.security.message.loggedin.roles";
-	public static final String LAST_AUTH_STATUS = "org.omnifaces.security.message.authStatus";
+	public static final String LOGGEDIN_USERNAME = "org.glassfish.jsr375.security.message.loggedin.username";
+	public static final String LOGGEDIN_ROLES = "org.glassfish.jsr375.security.message.loggedin.roles";
+	public static final String LAST_AUTH_STATUS = "org.glassfish.jsr375.security.message.authStatus";
 	
-	public static final String CONTEXT_REGISTRATION_ID = "org.omnifaces.security.message.registrationId";
+	public static final String CONTEXT_REGISTRATION_ID = "org.glassfish.jsr375.security.message.registrationId";
 	
 	// Key in the MessageInfo Map that when present AND set to true indicated a protected resource is being accessed.
 	// When the resource is not protected, GlassFish omits the key altogether. WebSphere does insert the key and sets
@@ -56,7 +52,7 @@ public final class Jaspic {
 
 	private Jaspic() {}
 	
-	public static boolean authenticate(HttpServletRequest request, HttpServletResponse response, AuthParameters authParameters) {
+	public static boolean authenticate(HttpServletRequest request, HttpServletResponse response, AuthenticationParameters authParameters) {
 		try {
 			request.setAttribute(IS_AUTHENTICATION, true);
 			if (authParameters != null) {
@@ -73,7 +69,7 @@ public final class Jaspic {
 		}
 	}
 	
-	public static boolean refreshAuthentication(HttpServletRequest request, HttpServletResponse response, AuthParameters authParameters) {
+	public static boolean refreshAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationParameters authParameters) {
 		try {
 			request.setAttribute(IS_REFRESH, true);
 			// Doing an explicit logout is actually not really nice, as it has some side-effects that we need to counter
@@ -88,10 +84,10 @@ public final class Jaspic {
 		}
 	}
 	
-	public static AuthParameters getAuthParameters(HttpServletRequest request) {
-		AuthParameters authParameters = (AuthParameters) request.getAttribute(AUTH_PARAMS);
+	public static AuthenticationParameters getAuthParameters(HttpServletRequest request) {
+		AuthenticationParameters authParameters = (AuthenticationParameters) request.getAttribute(AUTH_PARAMS);
 		if (authParameters == null) {
-			authParameters = new AuthParameters();
+			authParameters = new AuthenticationParametersImpl();
 		}
 		
 		return authParameters;
@@ -273,35 +269,6 @@ public final class Jaspic {
 		if (!isEmpty(registrationId)) {
 			AuthConfigFactory.getFactory().removeRegistration(registrationId);
 		}
-	}
-	
-	
-	// Couple of convenience methods for usage in JSF - may remove these as its too tightly coupled
-	
-	public static boolean authenticate() {
-		return authenticate(getRequest(), getResponse(), null);
-	}
-	
-	public static boolean authenticate(AuthParameters authParameters) {
-		return authenticate(getRequest(), getResponse(), authParameters);
-	}
-	
-	public static boolean refreshAuthentication(AuthParameters authParameters) {
-		return refreshAuthentication(getRequest(), getResponse(), authParameters);
-	}
-	
-	public static void logout() {
-		logout(getRequest(), getResponse());
-	}
-		
-	// End Couple of convenience methods for usage in JSF - may remove these as its too tightly coupled
-	
-	public static HttpServletRequest getRequest() {
-		return (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-	}
-	
-	public static HttpServletResponse getResponse() {
-		return (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
 	}
 	
 	

@@ -7,7 +7,7 @@ import javax.inject.Inject;
 import javax.security.auth.message.AuthException;
 import javax.security.auth.message.AuthStatus;
 import javax.security.authenticationmechanism.http.HttpAuthenticationMechanism;
-import javax.security.authenticationmechanism.http.HttpMsgContext;
+import javax.security.authenticationmechanism.http.HttpMessageContext;
 import javax.security.identitystore.CredentialValidationResult;
 import javax.security.identitystore.IdentityStore;
 import javax.security.identitystore.credential.Password;
@@ -22,7 +22,7 @@ public class TestAuthenticationMechanism implements HttpAuthenticationMechanism 
     private IdentityStore identityStore;
 
     @Override
-    public AuthStatus validateRequest(HttpServletRequest request, HttpServletResponse response, HttpMsgContext httpMessageContext) throws AuthException {
+    public AuthStatus validateRequest(HttpServletRequest request, HttpServletResponse response, HttpMessageContext httpMessageContext) throws AuthException {
 
         if (request.getParameter("name") != null && request.getParameter("password") != null) {
 

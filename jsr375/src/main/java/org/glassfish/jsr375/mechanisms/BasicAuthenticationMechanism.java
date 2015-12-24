@@ -9,7 +9,7 @@ import javax.enterprise.inject.spi.CDI;
 import javax.security.auth.message.AuthException;
 import javax.security.auth.message.AuthStatus;
 import javax.security.authenticationmechanism.http.HttpAuthenticationMechanism;
-import javax.security.authenticationmechanism.http.HttpMsgContext;
+import javax.security.authenticationmechanism.http.HttpMessageContext;
 import javax.security.identitystore.CredentialValidationResult;
 import javax.security.identitystore.IdentityStore;
 import javax.security.identitystore.credential.Password;
@@ -33,7 +33,7 @@ public class BasicAuthenticationMechanism implements HttpAuthenticationMechanism
     }
     
 	@Override
-	public AuthStatus validateRequest(HttpServletRequest request, HttpServletResponse response, HttpMsgContext httpMsgContext) throws AuthException {
+	public AuthStatus validateRequest(HttpServletRequest request, HttpServletResponse response, HttpMessageContext httpMsgContext) throws AuthException {
 		
 		String[] credentials = getCredentials(request);
 		if (!isEmpty(credentials)) {

@@ -16,11 +16,10 @@ import javax.servlet.http.HttpServletResponse;
  * 
  *
  */
-
 @DataBaseIdentityStoreDefinition(
-	dataSourceLookup="java:global/MyDS", 
-	 callerQuery="select password from caller where name = ?",
-	 groupsQuery="select group_name from caller_groups where caller_name = ?"
+    dataSourceLookup="java:global/MyDS", 
+    callerQuery="select password from caller where name = ?",
+    groupsQuery="select group_name from caller_groups where caller_name = ?"
 )
 @DeclareRoles({ "foo", "bar", "kaz" })
 @WebServlet("/servlet")

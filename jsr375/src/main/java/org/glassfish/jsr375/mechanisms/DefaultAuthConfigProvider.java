@@ -1,4 +1,4 @@
-package javax.security.authenticationmechanism;
+package org.glassfish.jsr375.mechanisms;
 
 import java.util.Map;
 
