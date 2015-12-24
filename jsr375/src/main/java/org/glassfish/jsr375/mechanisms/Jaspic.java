@@ -16,7 +16,7 @@ import javax.security.auth.message.callback.CallerPrincipalCallback;
 import javax.security.auth.message.callback.GroupPrincipalCallback;
 import javax.security.auth.message.config.AuthConfigFactory;
 import javax.security.auth.message.module.ServerAuthModule;
-import javax.security.authenticationmechanism.http.AuthenticationParameters;
+import javax.security.authentication.mechanism.http.AuthenticationParameters;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

@@ -1,4 +1,4 @@
-package javax.security.authenticationmechanism.http;
+package javax.security.authentication.mechanism.http;
 
 import java.util.List;
 import java.util.Map;

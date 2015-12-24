@@ -1,4 +1,4 @@
-package javax.security.authenticationmechanism.http;
+package javax.security.authentication.mechanism.http;
 
 public interface AuthenticationParameters {
 

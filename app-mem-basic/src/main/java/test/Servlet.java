@@ -3,7 +3,7 @@ package test;
 import java.io.IOException;
 
 import javax.annotation.security.DeclareRoles;
-import javax.security.authenticationmechanism.http.annotation.BasicAuthenticationMechanismDefinition;
+import javax.security.authentication.mechanism.http.annotation.BasicAuthenticationMechanismDefinition;
 import javax.security.identitystore.annotation.Credentials;
 import javax.security.identitystore.annotation.EmbeddedIdentityStoreDefinition;
 import javax.servlet.ServletException;

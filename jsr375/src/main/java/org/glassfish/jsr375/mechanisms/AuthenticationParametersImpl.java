@@ -1,6 +1,6 @@
 package org.glassfish.jsr375.mechanisms;
 
-import javax.security.authenticationmechanism.http.AuthenticationParameters;
+import javax.security.authentication.mechanism.http.AuthenticationParameters;
 
 /**
  * Parameters that are provided along with an authentication request.

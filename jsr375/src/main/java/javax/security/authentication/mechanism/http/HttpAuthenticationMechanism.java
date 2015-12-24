@@ -1,4 +1,4 @@
-package javax.security.authenticationmechanism.http;
+package javax.security.authentication.mechanism.http;
 
 import static javax.security.auth.message.AuthStatus.SEND_SUCCESS;
 

@@ -1,4 +1,4 @@
-package javax.security.authenticationmechanism.http.annotation;
+package javax.security.authentication.mechanism.http.annotation;
 
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;

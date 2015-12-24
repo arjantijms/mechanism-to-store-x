@@ -11,8 +11,8 @@ import javax.security.auth.message.MessageInfo;
 import javax.security.auth.message.MessagePolicy;
 import javax.security.auth.message.config.ServerAuthContext;
 import javax.security.auth.message.module.ServerAuthModule;
-import javax.security.authenticationmechanism.http.HttpAuthenticationMechanism;
-import javax.security.authenticationmechanism.http.HttpMessageContext;
+import javax.security.authentication.mechanism.http.HttpAuthenticationMechanism;
+import javax.security.authentication.mechanism.http.HttpMessageContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
