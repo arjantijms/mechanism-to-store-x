@@ -15,7 +15,8 @@
         <module>app-ldap</module>
         <module>app-custom</module>
         
-        <module>app-mem-custom</module>
+        <module>app-mem-basic</module>
+        <module>app-custom-session</module>
     </modules>
 
 </project>

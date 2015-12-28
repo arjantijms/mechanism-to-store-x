@@ -9,6 +9,7 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessBean;
 import javax.security.authentication.mechanism.http.HttpAuthenticationMechanism;
@@ -31,6 +32,10 @@ public class CdiExtension implements Extension {
     private Bean<IdentityStore> identityStoreBean;
     private Bean<HttpAuthenticationMechanism> authenticationMechanismBean;
     private boolean httpAuthenticationMechanismFound;
+    
+    public void register(@Observes BeforeBeanDiscovery beforeBean, BeanManager beanManager) {
+        beforeBean.addAnnotatedType(beanManager.createAnnotatedType(AutoApplySessionInterceptor.class), null);
+    }
 
     public <T> void processBean(@Observes ProcessBean<T> eventIn, BeanManager beanManager) {
 
