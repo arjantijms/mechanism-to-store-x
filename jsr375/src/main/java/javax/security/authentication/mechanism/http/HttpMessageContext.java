@@ -3,6 +3,7 @@ package javax.security.authentication.mechanism.http;
 import java.util.List;
 import java.util.Map;
 
+import javax.security.CallerPrincipal;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.message.AuthStatus;
@@ -175,6 +176,8 @@ public interface HttpMessageContext {
      *
      */
     AuthStatus notifyContainerAboutLogin(String username, List<String> roles);
+    
+    AuthStatus notifyContainerAboutLogin(CallerPrincipal callerPrincipal, List<String> roles);
 
     /**
      * Instructs the container to "do nothing".

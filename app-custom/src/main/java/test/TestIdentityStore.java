@@ -6,6 +6,7 @@ import static javax.security.identitystore.CredentialValidationResult.NOT_VALIDA
 import static javax.security.identitystore.CredentialValidationResult.Status.VALID;
 
 import javax.enterprise.context.RequestScoped;
+import javax.security.CallerPrincipal;
 import javax.security.identitystore.CredentialValidationResult;
 import javax.security.identitystore.IdentityStore;
 import javax.security.identitystore.credential.Credential;
@@ -29,7 +30,7 @@ public class TestIdentityStore implements IdentityStore {
             
             return new CredentialValidationResult(
                 VALID, 
-                "reza", 
+                new CallerPrincipal("reza"), 
                 asList("foo", "bar")
             );
         }

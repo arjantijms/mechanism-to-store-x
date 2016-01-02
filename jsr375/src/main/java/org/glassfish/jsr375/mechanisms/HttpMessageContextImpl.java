@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import javax.security.CallerPrincipal;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.message.AuthStatus;
@@ -216,12 +217,19 @@ public class HttpMessageContextImpl implements HttpMessageContext {
     	return SUCCESS;
     }
     
+    @Override
+    public AuthStatus notifyContainerAboutLogin(CallerPrincipal callerPrincipal, List<String> roles) {
+        Jaspic.notifyContainerAboutLogin(clientSubject, handler, callerPrincipal, roles);
+        
+        return SUCCESS;
+    }
+    
     /* (non-Javadoc)
      * @see javax.security.authenticationmechanism.http.HttpMessageContext#doNothing()
      */
     @Override
     public AuthStatus doNothing() {
-    	Jaspic.notifyContainerAboutLogin(clientSubject, handler, null, null);
+    	Jaspic.notifyContainerAboutLogin(clientSubject, handler, (String) null, null);
     	
     	return SUCCESS;
     }

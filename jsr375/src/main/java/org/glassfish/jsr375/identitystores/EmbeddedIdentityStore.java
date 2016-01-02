@@ -9,6 +9,7 @@ import static javax.security.identitystore.CredentialValidationResult.Status.VAL
 
 import java.util.Map;
 
+import javax.security.CallerPrincipal;
 import javax.security.identitystore.CredentialValidationResult;
 import javax.security.identitystore.IdentityStore;
 import javax.security.identitystore.annotation.Credentials;
@@ -41,7 +42,7 @@ public class EmbeddedIdentityStore implements IdentityStore {
         if (credentials != null && usernamePasswordCredential.getPassword().compareTo(credentials.password())) {
             return new CredentialValidationResult(
                 VALID, 
-                credentials.callerName(), 
+                new CallerPrincipal(credentials.callerName()), 
                 asList(credentials.groups())
             );
         }

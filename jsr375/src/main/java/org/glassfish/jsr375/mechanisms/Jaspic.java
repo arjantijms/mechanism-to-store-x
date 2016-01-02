@@ -4,6 +4,7 @@ import static java.lang.Boolean.TRUE;
 import static org.glassfish.jsr375.Utils.isEmpty;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 
 import javax.security.auth.Subject;
@@ -144,6 +145,42 @@ public final class Jaspic {
 	public static boolean isRefresh(HttpServletRequest request) {
 		return TRUE.equals(request.getAttribute(IS_REFRESH));
 	}
+	
+   public static void notifyContainerAboutLogin(Subject clientSubject, CallbackHandler handler, Principal callerPrincipal, List<String> roles) {
+        
+        try {
+            // 1. Create a handler (kind of directive) to add the caller principal (AKA user principal =basically user name, or user id) that
+            // the authenticator provides.
+            //
+            // This will be the name of the principal returned by e.g. HttpServletRequest#getUserPrincipal
+            // 
+            // 2 Execute the handler right away
+            //
+            // This will typically eventually (NOT right away) add the provided principal in an application server specific way to the JAAS 
+            // Subject.
+            // (it could become entries in a hash table inside the subject, or individual principles, or nested group principles etc.)
+            
+            handler.handle(new Callback[] { new CallerPrincipalCallback(clientSubject, callerPrincipal) });
+            
+            if (!isEmpty(roles)) {
+                // 1. Create a handler to add the groups (AKA roles) that the authenticator provides. 
+                //
+                // This is what e.g. HttpServletRequest#isUserInRole and @RolesAllowed for
+                //
+                // 2. Execute the handler right away
+                //
+                // This will typically eventually (NOT right away) add the provided roles in an application server specific way to the JAAS 
+                // Subject.
+                // (it could become entries in a hash table inside the subject, or individual principles, or nested group principles etc.)
+        
+                handler.handle(new Callback[] { new GroupPrincipalCallback(clientSubject, roles.toArray(new String[roles.size()])) });
+            }
+            
+        } catch (IOException | UnsupportedCallbackException e) {
+            // Should not happen
+            throw new IllegalStateException(e);
+        }
+    }
 	
 	public static void notifyContainerAboutLogin(Subject clientSubject, CallbackHandler handler, String username, List<String> roles) {
 		

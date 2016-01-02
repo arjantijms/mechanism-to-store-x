@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.security.CallerPrincipal;
 import javax.security.identitystore.CredentialValidationResult;
 import javax.security.identitystore.IdentityStore;
 import javax.security.identitystore.annotation.DataBaseIdentityStoreDefinition;
@@ -49,7 +50,7 @@ public class DataBaseIdentityStore implements IdentityStore {
         if (!passwords.isEmpty() && usernamePasswordCredential.getPassword().compareTo(passwords.get(0))) {
             return new CredentialValidationResult(
                 VALID, 
-                usernamePasswordCredential.getCaller(), 
+                new CallerPrincipal(usernamePasswordCredential.getCaller()), 
                 executeQuery(
                     dataSource, 
                     dataBaseIdentityStoreDefinition.groupsQuery(),

@@ -21,6 +21,7 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
+import javax.security.CallerPrincipal;
 import javax.security.identitystore.CredentialValidationResult;
 import javax.security.identitystore.IdentityStore;
 import javax.security.identitystore.annotation.LdapIdentityStoreDefinition;
@@ -85,7 +86,7 @@ public class LDapIdentityStore implements IdentityStore {
        
         return new CredentialValidationResult(
             VALID, 
-            usernamePasswordCredential.getCaller(), 
+            new CallerPrincipal(usernamePasswordCredential.getCaller()), 
             groups
         );
     }

@@ -45,7 +45,7 @@ public class BasicAuthenticationMechanism implements HttpAuthenticationMechanism
 
             if (result.getStatus() == VALID) {
                 return httpMsgContext.notifyContainerAboutLogin(
-                    result.getCallerName(), result.getCallerGroups());
+                    result.getCallerPrincipal(), result.getCallerGroups());
 			}		
 		}
 		

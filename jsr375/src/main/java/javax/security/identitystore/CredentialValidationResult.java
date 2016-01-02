@@ -47,6 +47,8 @@ import static javax.security.identitystore.CredentialValidationResult.Status.VAL
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.security.CallerPrincipal;
+
 /**
  * <code>CredentialValidationResult</code> is the result from an attempt to
  * validate an instance of
@@ -56,20 +58,16 @@ import java.util.List;
  */
 public class CredentialValidationResult {
 
-	public static final CredentialValidationResult INVALID_RESULT = new CredentialValidationResult(INVALID, null, null, null);
-    public static final CredentialValidationResult NOT_VALIDATED_RESULT = new CredentialValidationResult(NOT_VALIDATED, null, null, null);
+	public static final CredentialValidationResult INVALID_RESULT = new CredentialValidationResult(INVALID, null, null);
+    public static final CredentialValidationResult NOT_VALIDATED_RESULT = new CredentialValidationResult(NOT_VALIDATED, null, null);
 
-	private final String callerName;
+    private final CallerPrincipal callerPrincipal;
 	private final Status status;
-	private final List<String> roles;
 	private final List<String> groups;
 
 	public enum Status {
 		/**
-		 * Indicates that the credential could not be validated, for example, if
-		 * no suitable
-		 * {@link javax.security.identitystore.credential.CredentialValidator}
-		 * could be found.
+		 * Indicates that the credential could not be validated
 		 */
 		NOT_VALIDATED,
 
@@ -84,10 +82,6 @@ public class CredentialValidationResult {
 		 */
 		VALID
 	};
-
-	public CredentialValidationResult(Status status, String callerName, List<String> groups) {
-		this(status, callerName, groups, null);
-	}
 	
 	/**
 	 * Constructor
@@ -98,28 +92,23 @@ public class CredentialValidationResult {
 	 *            Validated caller
 	 * @param groups
 	 *            Groups associated with the caller from the identity store
-	 * @param roles
-	 *            Roles associated with the caller from the identity store
 	 */
-	public CredentialValidationResult(Status status, String callerName, List<String> groups, List<String> roles) {
+	public CredentialValidationResult(Status status, CallerPrincipal callerPrincipal, List<String> groups) {
 
-		if (null == status)
+		if (null == status) {
 			throw new NullPointerException("status");
+		}
 
 		this.status = status;
-		this.callerName = callerName;
+		this.callerPrincipal = callerPrincipal;
 
 		if (VALID == status) {
-			if (null != groups)
+			if (null != groups) {
 				groups = unmodifiableList(new ArrayList<>(groups));
+			}
 			this.groups = groups;
-
-			if (null != roles)
-				roles = unmodifiableList(new ArrayList<>(roles));
-			this.roles = roles;
 		} else {
 			this.groups = null;
-			this.roles = null;
 		}
 	}
 
@@ -131,16 +120,10 @@ public class CredentialValidationResult {
 	public Status getStatus() {
 		return status;
 	}
-
-	/**
-	 * Determines the Caller used to validate the credential.
-	 *
-	 * @return The caller name, <code>null</code> if {@link #getStatus} does not
-	 *         return {@link Status#VALID VALID}.
-	 */
-	public String getCallerName() {
-		return callerName;
-	}
+	
+    public CallerPrincipal getCallerPrincipal() {
+        return callerPrincipal;
+    }
 
 	/**
 	 * Determines the list of groups that the specified Caller is in, based on
@@ -154,20 +137,6 @@ public class CredentialValidationResult {
 	public List<String> getCallerGroups() {
 		return groups;
 	}
-
-	/**
-	 * Determines the list of roles that the specified caller is in, based on
-	 * the associated persistence store. The returned role list would include
-	 * roles directly assigned to the Caller, and roles assigned to groups which
-	 * contain the Caller.
-	 *
-	 * @return The list of roles that the specified caller is in, empty if none.
-	 *         <code>null</code> if {@link #getStatus} does not return
-	 *         {@link Status#VALID VALID} or if the identity store does not
-	 *         support roles.
-	 */
-	public List<String> getCallerRoles() {
-		return roles;
-	}
+    
 
 }
