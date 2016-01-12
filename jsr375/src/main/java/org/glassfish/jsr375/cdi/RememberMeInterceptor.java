@@ -101,7 +101,7 @@ public class RememberMeInterceptor implements Serializable {
         // Try to authenticate with the next interceptor or actual authentication mechanism
         AuthStatus authstatus = (AuthStatus) invocationContext.proceed();
         
-        if (authstatus == SUCCESS) {
+        if (authstatus == SUCCESS && httpMessageContext.getCallerPrincipal() != null) {
             
             // Authentication succeeded; store the authenticated identity in the 
             // remember me store and send a cookie with a token that can be used

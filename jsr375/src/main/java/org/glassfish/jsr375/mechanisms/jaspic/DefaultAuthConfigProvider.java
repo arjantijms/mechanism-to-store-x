@@ -1,4 +1,4 @@
-package org.glassfish.jsr375.mechanisms;
+package org.glassfish.jsr375.mechanisms.jaspic;
 
 import java.util.Map;
 

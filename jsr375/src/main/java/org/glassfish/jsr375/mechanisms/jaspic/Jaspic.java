@@ -1,4 +1,4 @@
-package org.glassfish.jsr375.mechanisms;
+package org.glassfish.jsr375.mechanisms.jaspic;
 
 import static java.lang.Boolean.TRUE;
 import static org.glassfish.jsr375.Utils.isEmpty;
@@ -22,6 +22,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.glassfish.jsr375.mechanisms.AuthenticationParametersImpl;
 
 /**
  * A set of utility methods for using the JASPIC API
@@ -148,7 +150,7 @@ public final class Jaspic {
 	
    public static void notifyContainerAboutLogin(Subject clientSubject, CallbackHandler handler, Principal callerPrincipal, List<String> roles) {
         
-        try {
+       try {
             // 1. Create a handler (kind of directive) to add the caller principal (AKA user principal =basically user name, or user id) that
             // the authenticator provides.
             //

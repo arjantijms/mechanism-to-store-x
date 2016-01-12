@@ -9,7 +9,7 @@ public interface RememberMeIdentityStore {
 
     CredentialValidationResult validate(RememberMeCredential credential);
     
-    String generateLoginToken(CallerPrincipal callerPrincipal, List<String> roles);
+    String generateLoginToken(CallerPrincipal callerPrincipal, List<String> groups);
     void removeLoginToken(String token);
     
 }

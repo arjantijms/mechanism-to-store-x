@@ -1,4 +1,4 @@
-package org.glassfish.jsr375.mechanisms;
+package org.glassfish.jsr375.mechanisms.jaspic;
 
 import java.util.Map;
 
@@ -15,6 +15,8 @@ import javax.security.authentication.mechanism.http.HttpAuthenticationMechanism;
 import javax.security.authentication.mechanism.http.HttpMessageContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.glassfish.jsr375.mechanisms.HttpMessageContextImpl;
 
 /**
  *

@@ -1,7 +1,7 @@
 package org.glassfish.jsr375.servlet;
 
-import static org.glassfish.jsr375.mechanisms.Jaspic.deregisterServerAuthModule;
-import static org.glassfish.jsr375.mechanisms.Jaspic.registerServerAuthModule;
+import static org.glassfish.jsr375.mechanisms.jaspic.Jaspic.deregisterServerAuthModule;
+import static org.glassfish.jsr375.mechanisms.jaspic.Jaspic.registerServerAuthModule;
 
 import java.util.Set;
 
@@ -14,7 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebListener;
 
 import org.glassfish.jsr375.cdi.CdiExtension;
-import org.glassfish.jsr375.mechanisms.HttpBridgeServerAuthModule;
+import org.glassfish.jsr375.mechanisms.jaspic.HttpBridgeServerAuthModule;
 
 /**
  * If an HttpAuthenticationMechanism implementation has been found on the classpath, this 

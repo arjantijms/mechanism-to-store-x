@@ -17,6 +17,7 @@
         
         <module>app-mem-basic</module>
         <module>app-custom-session</module>
+        <module>app-custom-rememberme</module>
     </modules>
 
 </project>

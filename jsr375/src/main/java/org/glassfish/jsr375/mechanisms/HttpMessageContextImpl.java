@@ -6,6 +6,7 @@ import static javax.security.auth.message.AuthStatus.SEND_FAILURE;
 import static javax.security.auth.message.AuthStatus.SUCCESS;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+import static org.glassfish.jsr375.Utils.isEmpty;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,6 +21,9 @@ import javax.security.authentication.mechanism.http.AuthenticationParameters;
 import javax.security.authentication.mechanism.http.HttpMessageContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.glassfish.jsr375.Utils;
+import org.glassfish.jsr375.mechanisms.jaspic.Jaspic;
 
 /**
  * A convenience context that provides access to JASPIC Servlet Profile specific types
@@ -215,6 +219,14 @@ public class HttpMessageContextImpl implements HttpMessageContext {
      */
     @Override
     public AuthStatus notifyContainerAboutLogin(String username, List<String> roles) {
+        if (username != null) {
+            this.callerPrincipal = new CallerPrincipal(username); // TODO: or store username separately?
+            this.roles = roles;
+        } else {
+            this.callerPrincipal = null;
+            this.roles = null;
+        }
+        
     	Jaspic.notifyContainerAboutLogin(clientSubject, handler, username, roles);
     	
     	return SUCCESS;
@@ -222,6 +234,9 @@ public class HttpMessageContextImpl implements HttpMessageContext {
     
     @Override
     public AuthStatus notifyContainerAboutLogin(CallerPrincipal callerPrincipal, List<String> roles) {
+        this.callerPrincipal = callerPrincipal;
+        this.roles = roles;
+        
         Jaspic.notifyContainerAboutLogin(clientSubject, handler, callerPrincipal, roles);
         
         return SUCCESS;
@@ -232,6 +247,9 @@ public class HttpMessageContextImpl implements HttpMessageContext {
      */
     @Override
     public AuthStatus doNothing() {
+        this.callerPrincipal = null;
+        this.roles = null;
+        
     	Jaspic.notifyContainerAboutLogin(clientSubject, handler, (String) null, null);
     	
     	return SUCCESS;
