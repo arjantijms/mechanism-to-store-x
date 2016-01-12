@@ -40,10 +40,11 @@
 package javax.security.identitystore.credential;
 
 /**
- * <code>AbstractCredential</code> contains behavior common to
- * <code>{@link Credential}</code> implementations.
+ * <code>AbstractClearableCredential</code> contains behavior common to
+ * <code>{@link Credential}</code> implementations that can be meaningfully
+ * cleared.
  */
-public abstract class AbstractCredential implements Credential {
+public abstract class AbstractClearableCredential implements Credential {
 
     private volatile boolean cleared = false;
 
@@ -52,24 +53,23 @@ public abstract class AbstractCredential implements Credential {
      * @return <code>true</code> if the credential has been cleared, otherwise false.
      */
     @Override
-    final public boolean isCleared() {
+    public final boolean isCleared() {
         return cleared;
     }
 
     /**
      * Specifies that the credential value has been securely cleared.
      */
-    final protected void setCleared() {
+    protected final void setCleared() {
         this.cleared = true;
     }
-
 
     /**
      * Clears the credential. For example, if the credential includes a password,
      * this method would overwrite the password value.
      */
     @Override
-    final public void clear() {
+    public final void clear() {
         clearCredential();
         setCleared();
     }
@@ -83,5 +83,5 @@ public abstract class AbstractCredential implements Credential {
      * For example, if the credential includes a password,
      * this method would overwrite the password value.
      */
-    abstract protected void clearCredential();
+    protected abstract void clearCredential();
 }

@@ -40,52 +40,23 @@
 package javax.security.identitystore.credential;
 
 /**
- * <code>TokenCredential</code> represents a credential presented as a token,
- * such as a JWT or a proprietary token value.
+ * <code>RememberMeCredential</code> represents a credential presented as a token,
+ * for the explicit usage with the JSR 375 provided remember me function.
  * <p>
  *
  */
-public class TokenCredential implements Credential {
+public class RememberMeCredential implements Credential {
 
-    private final boolean valid;
-    private final String caller;
     private final String token;
-
-// TODO: extend for standard JWT support
 
     /**
      * Constructor
      *
-     * @param valid  <code>true</code> if an integrity check has validated the credential.
      * @param caller The caller associated with this credential
      * @param token  The token value to compare for authentication.
      */
-    public TokenCredential(boolean valid, String caller, String token) {
-        this.valid = valid;
-        this.caller = caller;
+    public RememberMeCredential(String token) {
         this.token = token;
-    }
-
-    /**
-     * Determines whether the credential is valid. This would be called as part of
-     * the credential validation process to check the integrity of the credential,
-     * such as a signature check. This check would be self-contained,
-     * not requiring identity store access.
-     *
-     * @return <code>true</code> if credential has integrity.
-     */
-    public boolean isValid() {
-        return valid;
-    }
-
-    /**
-     * Determines the caller associated with this credential. This value would
-     * usually be the unique value identifying the caller, like a login name.
-     *
-     * @return The caller associated with this credential
-     */
-    public String getCaller() {
-        return caller;
     }
 
     /**
@@ -96,5 +67,5 @@ public class TokenCredential implements Credential {
     public String getToken() {
         return token;
     }
-
+ 
 }

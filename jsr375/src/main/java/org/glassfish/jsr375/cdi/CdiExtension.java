@@ -35,6 +35,7 @@ public class CdiExtension implements Extension {
     
     public void register(@Observes BeforeBeanDiscovery beforeBean, BeanManager beanManager) {
         beforeBean.addAnnotatedType(beanManager.createAnnotatedType(AutoApplySessionInterceptor.class), null);
+        beforeBean.addAnnotatedType(beanManager.createAnnotatedType(RememberMeInterceptor.class), null);
     }
 
     public <T> void processBean(@Observes ProcessBean<T> eventIn, BeanManager beanManager) {

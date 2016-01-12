@@ -39,6 +39,8 @@
  */
 package javax.security.identitystore.credential;
 
+import static java.util.Arrays.copyOf;
+
 import java.util.Arrays;
 
 /**
@@ -47,9 +49,8 @@ import java.util.Arrays;
  */
 public class Password {
 
-    final private static char[] EMPTY_VALUE = new char[0];
-
-    volatile private char[] value;
+    private static final char[] EMPTY_VALUE = new char[0];
+    private volatile char[] value;
 
     /**
      * Constructor
@@ -58,10 +59,11 @@ public class Password {
      * @throws java.lang.NullPointerException Value is null
      */
     public Password(char[] value) {
-        if (null == value)
+        if (null == value) {
             throw new NullPointerException("Password value");
+        }
 
-        this.value = Arrays.copyOf(value,value.length);
+        this.value = copyOf(value, value.length);
     }
 
     /**

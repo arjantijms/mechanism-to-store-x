@@ -58,5 +58,5 @@ public interface IdentityStore {
      * @return The validation result, including associated caller roles and
      *         groups.
      */
-    public CredentialValidationResult validate(Credential credential);
+    CredentialValidationResult validate(Credential credential);
 }

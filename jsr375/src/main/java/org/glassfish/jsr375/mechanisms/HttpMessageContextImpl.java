@@ -35,6 +35,9 @@ public class HttpMessageContextImpl implements HttpMessageContext {
 	private MessageInfo messageInfo; 
     private Subject clientSubject;
     private AuthenticationParameters authParameters;
+
+    private CallerPrincipal callerPrincipal;
+    private List<String> roles;
     
     public HttpMessageContextImpl(CallbackHandler handler, Map<String, String> moduleOptions, MessageInfo messageInfo, Subject clientSubject) {
         this.handler = handler;
@@ -232,6 +235,16 @@ public class HttpMessageContextImpl implements HttpMessageContext {
     	Jaspic.notifyContainerAboutLogin(clientSubject, handler, (String) null, null);
     	
     	return SUCCESS;
+    }
+    
+    @Override
+    public CallerPrincipal getCallerPrincipal() {
+        return callerPrincipal;
+    }
+
+    @Override
+    public List<String> getRoles() {
+        return roles;
     }
 
 }

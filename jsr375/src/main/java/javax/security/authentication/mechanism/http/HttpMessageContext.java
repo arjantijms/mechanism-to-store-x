@@ -199,5 +199,9 @@ public interface HttpMessageContext {
      * @return {@link AuthStatus#SUCCESS}
      */
     AuthStatus doNothing();
+    
+    CallerPrincipal getCallerPrincipal();
+
+    List<String> getRoles();
 
 }

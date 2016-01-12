@@ -42,7 +42,7 @@ package javax.security.identitystore.credential;
 /**
  * Represents the credentials typically used by standard username/password authentication.
  */
-public class UsernamePasswordCredential extends AbstractCredential {
+public class UsernamePasswordCredential extends AbstractClearableCredential {
 
     private final String caller;
     private final Password password;
@@ -53,7 +53,7 @@ public class UsernamePasswordCredential extends AbstractCredential {
      * @param callerName The user name
      * @param password The password
      */
-    public UsernamePasswordCredential(String callerName, javax.security.identitystore.credential.Password password) {
+    public UsernamePasswordCredential(String callerName, Password password) {
         this.caller = callerName;
         this.password = password;
     }
@@ -91,16 +91,4 @@ public class UsernamePasswordCredential extends AbstractCredential {
         return caller;
     }
 
-    /**
-     * Determines whether the credential is valid. This would be called as part of
-     * the credential validation process to check the integrity of the credential,
-     * such as a signature check. This check would be self-contained,
-     * not requiring identity store access.
-     *
-     * @return <code>true</code> if credential has integrity.
-     */
-    @Override
-    public boolean isValid() {
-        return true;
-    }
 }

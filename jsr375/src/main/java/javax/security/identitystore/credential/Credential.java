@@ -48,22 +48,16 @@ public interface Credential {
      * Determines whether the credential value has been securely cleared.
      * @return <code>true</code> if the credential has been cleared, otherwise false.
      */
-    public boolean isCleared();
+    default boolean isCleared() {
+        return false;
+    }
 
     /**
      * Clears the credential. For example, if the credential includes a password,
      * this method would overwrite the password value.
      */
-    public void clear();
-
-    /**
-     * Determines the caller associated with this credential. This value would
-     * usually be the unique value identifying the caller, like a login name.
-     *
-     * @return The caller associated with this credential
-     */
-    public String getCaller();
-
+    default void clear() {}
+    
     /**
      * Determines whether the credential is valid. This would be called as part of
      * the credential validation process to check the integrity of the credential,
@@ -72,5 +66,18 @@ public interface Credential {
      *
      * @return <code>true</code> if credential has integrity.
      */
-    public boolean isValid();
+    default boolean isValid() {
+        return true;
+    }
+
+    /**
+     * Determines the caller associated with this credential. This value would
+     * usually be the unique value identifying the caller, like a login name.
+     *
+     * @return The caller associated with this credential
+     */
+    default String getCaller() {
+        return "";
+    }
+   
 }

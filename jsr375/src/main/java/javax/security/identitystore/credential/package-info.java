@@ -40,8 +40,7 @@
 
 /**
  * The Identity Store Credential API package. This package
- * contains classes and interfaces associated with submitting and validating
- * credentials.
+ * contains classes and interfaces associated with submitting credentials.
  *
  * @version 1.0
  */
