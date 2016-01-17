@@ -1,25 +1,31 @@
 package org.glassfish.jsr375.cdi;
 
-import static java.util.concurrent.TimeUnit.DAYS;
 import static javax.interceptor.Interceptor.Priority.PLATFORM_BEFORE;
 import static javax.security.auth.message.AuthStatus.SUCCESS;
 import static javax.security.identitystore.CredentialValidationResult.Status.VALID;
+import static org.glassfish.jsr375.Utils.cleanSubjectMethod;
+import static org.glassfish.jsr375.Utils.isEmpty;
+import static org.glassfish.jsr375.Utils.isImplementationOf;
+import static org.glassfish.jsr375.Utils.validateRequestMethod;
+import static org.glassfish.jsr375.cdi.CdiUtils.getAnnotation;
 import static org.glassfish.jsr375.servlet.CookieHandler.getCookie;
 import static org.glassfish.jsr375.servlet.CookieHandler.removeCookie;
 import static org.glassfish.jsr375.servlet.CookieHandler.saveCookie;
 
 import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.util.Arrays;
+import java.util.Optional;
 
 import javax.annotation.Priority;
+import javax.el.ELProcessor;
 import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Intercepted;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 import javax.security.auth.message.AuthStatus;
-import javax.security.authentication.mechanism.http.HttpAuthenticationMechanism;
 import javax.security.authentication.mechanism.http.HttpMessageContext;
 import javax.security.authentication.mechanism.http.annotation.RememberMe;
 import javax.security.identitystore.CredentialValidationResult;
@@ -36,19 +42,15 @@ public class RememberMeInterceptor implements Serializable {
 
     private static final long serialVersionUID = 1L;
     
-    private final static Method validateRequestMethod = getMethod(
-        HttpAuthenticationMechanism.class, 
-        "validateRequest",
-        HttpServletRequest.class, HttpServletResponse.class, HttpMessageContext.class);
-    
-    private final static Method cleanSubjectMethod = getMethod(
-        HttpAuthenticationMechanism.class, 
-        "cleanSubject",
-        HttpServletRequest.class, HttpServletResponse.class, HttpMessageContext.class);
-   
-    
     @Inject 
     private Instance<RememberMeIdentityStore> rememberMeIdentityStoreInstance;
+    
+    @Inject
+    private BeanManager beanManager;
+    
+    @Inject
+    @Intercepted
+    private Bean<?> interceptedBean;
 
     @AroundInvoke
     public Object intercept(InvocationContext invocationContext) throws Exception {
@@ -103,16 +105,29 @@ public class RememberMeInterceptor implements Serializable {
         
         if (authstatus == SUCCESS && httpMessageContext.getCallerPrincipal() != null) {
             
-            // Authentication succeeded; store the authenticated identity in the 
-            // remember me store and send a cookie with a token that can be used
+            // Authentication succeeded;
+            // Check if remember me is wanted by the caller and if so
+            // store the authenticated identity in the remember me store
+            // and send a cookie with a token that can be used
             // to retrieve this stored identity later
             
-            String token = rememberMeIdentityStore.generateLoginToken(
-                httpMessageContext.getCallerPrincipal(),
-                httpMessageContext.getRoles()
-            );
+            RememberMe rememberMeAnnotation = getRememberMeFromIntercepted();
             
-            saveCookie(request, response, "JREMEMBERMEID", token, (int) DAYS.toSeconds(14));
+            Boolean isRememberMe = true;
+            if (!isEmpty(rememberMeAnnotation.isRememberMeExpression())) {
+                ELProcessor elProcessor = getElProcessor(invocationContext, httpMessageContext);
+                
+                isRememberMe = (Boolean) elProcessor.eval(rememberMeAnnotation.isRememberMeExpression());
+            }
+            
+            if (isRememberMe) {
+                String token = rememberMeIdentityStore.generateLoginToken(
+                    httpMessageContext.getCallerPrincipal(),
+                    httpMessageContext.getRoles()
+                );
+                
+                saveCookie(request, response, "JREMEMBERMEID", token, rememberMeAnnotation.cookieMaxAgeSeconds());
+            }
         }
         
         return authstatus;
@@ -135,19 +150,23 @@ public class RememberMeInterceptor implements Serializable {
         
     }
     
-    private static boolean isImplementationOf(Method implementationMethod, Method interfaceMethod) {
-        return
-            interfaceMethod.getDeclaringClass().isAssignableFrom(implementationMethod.getDeclaringClass()) &&
-            interfaceMethod.getName().equals(implementationMethod.getName()) &&
-            Arrays.equals(interfaceMethod.getParameterTypes(), implementationMethod.getParameterTypes());
+    private RememberMe getRememberMeFromIntercepted() {
+        Optional<RememberMe> optionalRememberMe = getAnnotation(beanManager, interceptedBean.getBeanClass(), RememberMe.class);
+        if (optionalRememberMe.isPresent()) {
+            return optionalRememberMe.get();
+        }
+        
+        throw new IllegalStateException("@RememberMe not present on " + interceptedBean.getBeanClass());
     }
     
-    private static Method getMethod(Class<?> base, String name, Class<?>... parameterTypes) {
-        try {
-            // Method literals in Java would be nice
-            return base.getMethod(name, parameterTypes);
-        } catch (NoSuchMethodException | SecurityException e) {
-            throw new IllegalStateException(e);
-        }
+    private ELProcessor getElProcessor(InvocationContext invocationContext, HttpMessageContext httpMessageContext) {
+        ELProcessor elProcessor = new ELProcessor();
+        
+        elProcessor.getELManager().addELResolver(beanManager.getELResolver());
+        elProcessor.defineBean("this", invocationContext.getTarget());
+        elProcessor.defineBean("httpMessageContext", httpMessageContext);
+        
+        return elProcessor;
     }
+ 
 }

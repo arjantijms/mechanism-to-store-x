@@ -15,6 +15,13 @@ Example applications reside within the app-`X` modules, where `X` represents a s
   * authenticate: http://localhost:8080/app-custom-session/servlet?name=reza&password=secret1
   * Check authentication remembered: http://localhost:8080/app-custom-session/servlet
   * logout: http://localhost:8080/app-custom-session/servlet?logout
+* **app-custom-session** - As app-session, but uses a JSR 375 provided interceptor to conditionally remember the caller by writing a cookie and storing the details in an appplication provided special purpose identity store
+  * Check initially not authenticated: http://localhost:8080/app-custom-session/servlet
+  * authenticate: http://localhost:8080/app-custom-session/servlet?name=reza&password=secret1
+  * Check authentication NOT remembered: http://localhost:8080/app-custom-session/servlet
+  * authenticate with remember me: http://localhost:8080/app-custom-session/servlet?name=reza&password=secret1&rememberme=true
+  * Check authentication remembered: http://localhost:8080/app-custom-session/servlet
+  * logout: http://localhost:8080/app-custom-session/servlet?logout
 
 Each application uses a test SAM (authentication module) that's also provided by the application. This SAM takes the caller name and password directly from the request. **NOTE**: This is for demonstration purposes only and is obviously not a very good practice for real scenarios.
 

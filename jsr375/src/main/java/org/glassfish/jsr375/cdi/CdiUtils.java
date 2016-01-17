@@ -1,5 +1,6 @@
 package org.glassfish.jsr375.cdi;
 
+import static java.util.Arrays.asList;
 import static java.util.Optional.empty;
 
 import java.lang.annotation.Annotation;
@@ -28,6 +29,33 @@ public class CdiUtils {
         }
 
         Queue<Annotation> annotations = new LinkedList<>(annotated.getAnnotations());
+
+        while (!annotations.isEmpty()) {
+            Annotation annotation = annotations.remove();
+
+            if (annotation.annotationType().equals(annotationType)) {
+                return Optional.of(annotationType.cast(annotation));
+            }
+
+            if (beanManager.isStereotype(annotation.annotationType())) {
+                annotations.addAll(
+                    beanManager.getStereotypeDefinition(
+                        annotation.annotationType()
+                    )
+                );
+            }
+        }
+
+        return empty();
+    }
+    
+    public static <A extends Annotation> Optional<A> getAnnotation(BeanManager beanManager, Class<?> annotatedClass, Class<A> annotationType) {
+
+        if (annotatedClass.isAnnotationPresent(annotationType)) {
+            return Optional.of(annotatedClass.getAnnotation(annotationType));
+        }
+
+        Queue<Annotation> annotations = new LinkedList<>(asList(annotatedClass.getAnnotations()));
 
         while (!annotations.isEmpty()) {
             Annotation annotation = annotations.remove();

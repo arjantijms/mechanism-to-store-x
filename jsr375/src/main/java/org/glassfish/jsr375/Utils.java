@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.ByteBuffer;
@@ -28,6 +29,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -40,6 +42,8 @@ import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
+import javax.security.authentication.mechanism.http.HttpAuthenticationMechanism;
+import javax.security.authentication.mechanism.http.HttpMessageContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
@@ -51,6 +55,16 @@ import javax.xml.bind.DatatypeConverter;
  *
  */
 public final class Utils {
+    
+    public final static Method validateRequestMethod = getMethod(
+        HttpAuthenticationMechanism.class, 
+        "validateRequest",
+        HttpServletRequest.class, HttpServletResponse.class, HttpMessageContext.class);
+        
+    public final static Method cleanSubjectMethod = getMethod(
+        HttpAuthenticationMechanism.class, 
+        "cleanSubject",
+        HttpServletRequest.class, HttpServletResponse.class, HttpMessageContext.class);
 
 	private static final String ERROR_UNSUPPORTED_ENCODING = "UTF-8 is apparently not supported on this platform.";
 
@@ -363,5 +377,21 @@ public final class Utils {
 		stream(input, output);
 		return output.toByteArray();
 	}
-
+	
+   public static boolean isImplementationOf(Method implementationMethod, Method interfaceMethod) {
+        return
+            interfaceMethod.getDeclaringClass().isAssignableFrom(implementationMethod.getDeclaringClass()) &&
+            interfaceMethod.getName().equals(implementationMethod.getName()) &&
+            Arrays.equals(interfaceMethod.getParameterTypes(), implementationMethod.getParameterTypes());
+    }
+    
+   public static Method getMethod(Class<?> base, String name, Class<?>... parameterTypes) {
+        try {
+            // Method literals in Java would be nice
+            return base.getMethod(name, parameterTypes);
+        } catch (NoSuchMethodException | SecurityException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+	
 }

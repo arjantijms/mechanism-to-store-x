@@ -16,7 +16,10 @@ import javax.security.identitystore.credential.UsernamePasswordCredential;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@RememberMe
+@RememberMe(
+    cookieMaxAgeSeconds = 3600,
+    isRememberMeExpression ="this.isRememberMe(httpMessageContext)"
+)
 @RequestScoped
 public class TestAuthenticationMechanism implements HttpAuthenticationMechanism {
     
@@ -55,6 +58,10 @@ public class TestAuthenticationMechanism implements HttpAuthenticationMechanism 
         } 
 
         return httpMessageContext.doNothing();
+    }
+    
+    public Boolean isRememberMe(HttpMessageContext httpMessageContext) {
+        return httpMessageContext.getRequest().getParameter("rememberme") != null;
     }
     
     // Workaround for possible CDI bug; at least in Weld 2.3.2 default methods don't seem to be intercepted
