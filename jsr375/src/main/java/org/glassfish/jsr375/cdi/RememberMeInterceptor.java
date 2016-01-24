@@ -123,7 +123,7 @@ public class RememberMeInterceptor implements Serializable {
             if (isRememberMe) {
                 String token = rememberMeIdentityStore.generateLoginToken(
                     httpMessageContext.getCallerPrincipal(),
-                    httpMessageContext.getRoles()
+                    httpMessageContext.getGroups()
                 );
                 
                 saveCookie(request, response, "JREMEMBERMEID", token, rememberMeAnnotation.cookieMaxAgeSeconds());

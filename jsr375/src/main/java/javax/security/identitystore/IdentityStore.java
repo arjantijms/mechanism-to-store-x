@@ -39,14 +39,19 @@
  */
 package javax.security.identitystore;
 
+import javax.resource.spi.AuthenticationMechanism;
+import javax.security.auth.message.module.ServerAuthModule;
 import javax.security.identitystore.credential.Credential;
 
 /**
  * <code>IdentityStore</code> is a mechanism for validating a Caller's
  * credentials and accessing a Caller's identity attributes, and would be used
- * by an authentication mechanism, such as JASPIC. An <code>IdentityStore</code>
- * obtains identity data from a persistence mechanism, such as a file, database,
- * or LDAP.
+ * by an authentication mechanism, such as the JSR 375 {@link AuthenticationMechanism} 
+ * or the JSR 196 (JASPIC) {@link ServerAuthModule}. 
+ * 
+ * <p>
+ * An <code>IdentityStore</code> obtains identity data from a persistence mechanism, 
+ * such as a file, database, or LDAP.
  */
 public interface IdentityStore {
 

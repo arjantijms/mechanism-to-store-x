@@ -27,39 +27,6 @@ public interface HttpMessageContext {
     boolean isAuthenticationRequest();
 
     /**
-     * Asks the container to register the given username and roles in order to make
-     * them available to the application for use with {@link HttpServletRequest#isUserInRole(String)} etc.
-     * <p>
-     * This will also ask the runtime to register an authentication session that will live as long as the
-     * HTTP session is valid. 
-     * <p>
-     * Note that after this call returned, the authenticated identity will not be immediately active. This
-     * will only take place (should not errors occur) after the {@link ServerAuthContext} or {@link ServerAuthModule}
-     * in which this call takes place return control back to the runtime.
-     * 
-     * @param username the user name that will become the caller principal
-     * @param roles the roles associated with the caller principal
-     */
-    void registerWithContainer(String username, List<String> roles);
-
-    /**
-     * Asks the container to register the given username and roles in order to make
-     * them available to the application for use with {@link HttpServletRequest#isUserInRole(String)} etc.
-     * <p>
-     * This will optionally (on the basis of the registerSession parameter) ask the runtime to register an 
-     * authentication session that will live as long as the HTTP session is valid. 
-     * <p>
-     * Note that after this call returned, the authenticated identity will not be immediately active. This
-     * will only take place (should not errors occur) after the {@link ServerAuthContext} or {@link ServerAuthModule}
-     * in which this call takes place return control back to the runtime.
-     * 
-     * @param username the user name that will become the caller principal
-     * @param roles the roles associated with the caller principal
-     * @param registerSession if true asks the container to register an authentication setting, if false does not ask this.
-     */
-    void registerWithContainer(String username, List<String> roles, boolean registerSession);
-
-    /**
      * Checks if during the current request code has asked the runtime to register an authentication session.
      * 
      * @return true if code has asked to register an authentication session, false otherwise.
@@ -74,10 +41,10 @@ public interface HttpMessageContext {
      * Note that the user name and roles being asked is an implementation detail; there is no portable way to have
      * an auth context read back the user name and roles that were processed by the {@link CallbackHandler}.
      * 
-     * @param username the user name for which authentication should be be remembered
-     * @param roles the roles for which authentication should be remembered.
+     * @param callerName the user name for which authentication should be be remembered
+     * @param groups the groups for which authentication should be remembered.
      */
-    void setRegisterSession(String username, List<String> roles);
+    void setRegisterSession(String callerName, List<String> groups);
 
     void cleanClientSubject();
 
@@ -141,7 +108,7 @@ public interface HttpMessageContext {
      * Sets the response status to 401 (not found).
      * <p>
      * As a convenience this method returns SEND_FAILURE, so this method can be used in
-     * one fluent return statement from an auth module.
+     * one fluent return statement from an {@link HttpAuthenticationMechanism}
      * 
      * @return {@link AuthStatus#SEND_FAILURE}
      */
@@ -151,14 +118,14 @@ public interface HttpMessageContext {
      * Sets the response status to 404 (not found).
      * <p>
      * As a convenience this method returns SEND_FAILURE, so this method can be used in
-     * one fluent return statement from an auth module.
+     * one fluent return statement from an {@link HttpAuthenticationMechanism}
      * 
      * @return {@link AuthStatus#SEND_FAILURE}
      */
     AuthStatus responseNotFound();
 
     /**
-     * Asks the container to register the given username and roles in order to make
+     * Asks the container to register the given caller name and groups in order to make
      * them available to the application for use with {@link HttpServletRequest#isUserInRole(String)} etc.
      *
      * <p>
@@ -202,6 +169,6 @@ public interface HttpMessageContext {
     
     CallerPrincipal getCallerPrincipal();
 
-    List<String> getRoles();
+    List<String> getGroups();
 
 }

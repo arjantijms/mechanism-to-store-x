@@ -6,7 +6,6 @@ import static javax.security.auth.message.AuthStatus.SEND_FAILURE;
 import static javax.security.auth.message.AuthStatus.SUCCESS;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
-import static org.glassfish.jsr375.Utils.isEmpty;
 
 import java.io.IOException;
 import java.util.List;
@@ -22,7 +21,6 @@ import javax.security.authentication.mechanism.http.HttpMessageContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.glassfish.jsr375.Utils;
 import org.glassfish.jsr375.mechanisms.jaspic.Jaspic;
 
 /**
@@ -41,7 +39,7 @@ public class HttpMessageContextImpl implements HttpMessageContext {
     private AuthenticationParameters authParameters;
 
     private CallerPrincipal callerPrincipal;
-    private List<String> roles;
+    private List<String> groups;
     
     public HttpMessageContextImpl(CallbackHandler handler, Map<String, String> moduleOptions, MessageInfo messageInfo, Subject clientSubject) {
         this.handler = handler;
@@ -71,31 +69,6 @@ public class HttpMessageContextImpl implements HttpMessageContext {
     @Override
     public boolean isAuthenticationRequest() {
     	return Jaspic.isAuthenticationRequest(getRequest());
-    }
-    
-    /* (non-Javadoc)
-     * @see javax.security.authenticationmechanism.http.HttpMessageContext#registerWithContainer(java.lang.String, java.util.List)
-     */
-    @Override
-    public void registerWithContainer(String username, List<String> roles) {
-        registerWithContainer(username, roles, true);
-    }
-    
-    /* (non-Javadoc)
-     * @see javax.security.authenticationmechanism.http.HttpMessageContext#registerWithContainer(java.lang.String, java.util.List, boolean)
-     */
-    @Override
-    public void registerWithContainer(String username, List<String> roles, boolean registerSession) {
-    	
-    	// Basic registration of the username and roles with the container
-    	notifyContainerAboutLogin(username, roles);
-    	
-    	// Explicitly set a flag that we did authentication, so code can check that this happened
-        Jaspic.setDidAuthentication((HttpServletRequest) messageInfo.getRequestMessage());
-        
-        if (registerSession) {
-            Jaspic.setRegisterSession(messageInfo, username, roles);
-        }
     }
     
     /* (non-Javadoc)
@@ -218,26 +191,29 @@ public class HttpMessageContextImpl implements HttpMessageContext {
      * @see javax.security.authenticationmechanism.http.HttpMessageContext#notifyContainerAboutLogin(java.lang.String, java.util.List)
      */
     @Override
-    public AuthStatus notifyContainerAboutLogin(String username, List<String> roles) {
-        if (username != null) {
-            this.callerPrincipal = new CallerPrincipal(username); // TODO: or store username separately?
-            this.roles = roles;
-        } else {
-            this.callerPrincipal = null;
-            this.roles = null;
-        }
+    public AuthStatus notifyContainerAboutLogin(String callerName, List<String> groups) {
+        CallerPrincipal callerPrincipal = null;
+        if (callerName != null) {
+            callerPrincipal = new CallerPrincipal(callerName); // TODO: or store username separately?
+        } 
         
-    	Jaspic.notifyContainerAboutLogin(clientSubject, handler, username, roles);
-    	
-    	return SUCCESS;
+        return notifyContainerAboutLogin(callerPrincipal, groups);
     }
     
     @Override
-    public AuthStatus notifyContainerAboutLogin(CallerPrincipal callerPrincipal, List<String> roles) {
+    public AuthStatus notifyContainerAboutLogin(CallerPrincipal callerPrincipal, List<String> groups) {
         this.callerPrincipal = callerPrincipal;
-        this.roles = roles;
+        if (callerPrincipal != null) {
+            this.groups = groups;
+        } else {
+            this.groups = null;
+        }
         
-        Jaspic.notifyContainerAboutLogin(clientSubject, handler, callerPrincipal, roles);
+        Jaspic.notifyContainerAboutLogin(clientSubject, handler, callerPrincipal, groups);
+        
+        // Explicitly set a flag that we did authentication, so code can check that this happened
+        // TODO: or throw CDI event here?
+        Jaspic.setDidAuthentication((HttpServletRequest) messageInfo.getRequestMessage());
         
         return SUCCESS;
     }
@@ -248,7 +224,7 @@ public class HttpMessageContextImpl implements HttpMessageContext {
     @Override
     public AuthStatus doNothing() {
         this.callerPrincipal = null;
-        this.roles = null;
+        this.groups = null;
         
     	Jaspic.notifyContainerAboutLogin(clientSubject, handler, (String) null, null);
     	
@@ -261,8 +237,8 @@ public class HttpMessageContextImpl implements HttpMessageContext {
     }
 
     @Override
-    public List<String> getRoles() {
-        return roles;
+    public List<String> getGroups() {
+        return groups;
     }
 
 }

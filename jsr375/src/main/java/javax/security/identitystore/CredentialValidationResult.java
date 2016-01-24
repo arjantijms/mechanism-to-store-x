@@ -48,13 +48,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.security.CallerPrincipal;
+import javax.security.identitystore.credential.Credential;
 
 /**
  * <code>CredentialValidationResult</code> is the result from an attempt to
- * validate an instance of
- * {@link javax.security.identitystore.credential.Credential}.
+ * validate an instance of {@link Credential}.
  *
- * @see javax.security.identitystore.IdentityStore#validate
+ * @see IdentityStore#validate
  */
 public class CredentialValidationResult {
 
